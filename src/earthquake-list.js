@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid } from '@ohxyz/grid';
+import { List } from './list.js';
 import { getEarthquakes } from './service.js';
 import '@ohxyz/grid/style/default.css';
 
@@ -48,9 +48,7 @@ class EarthquakeList extends React.Component {
         ];
 
         return (
-            <div id="earthquake-list">
-                <Grid items={ this.state.earthquakes } cols={ columnRefs } />
-            </div>
+                <List items={ this.state.earthquakes } cols={ columnRefs } />
         );
     }
 }
