@@ -3,10 +3,14 @@ const path = require( 'path' );
 module.exports = {
     
     mode: 'development',
-    entry: './src/index.js',
+    entry: {
+        'bundle.js': [
+            path.resolve(__dirname, 'src/index.js'),
+        ]
+    },
     output: {
+        filename: '[name]',
         path: path.join( __dirname, 'public' ),
-        filename: 'bundle.js'
     },
     devtool: 'inline-source-map',
     devServer: {
@@ -18,7 +22,7 @@ module.exports = {
         rules: [ 
             {
                 test: /\.js[x]{0,1}$/,
-                exclude: /node_modules/,
+                exclude: [ /node_modules/, /src\/map/ ],
                 use: {
                     loader: 'babel-loader',
                     options: { presets: [ 'react', 'env' ] }

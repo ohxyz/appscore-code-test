@@ -2,13 +2,13 @@
  * Service layer for getting earthquake data
  */
 
-import { Earthquake } from './model.js';
+import { Earthquake } from '../models/earthquake.js';
 
 function getEarthquakes( url ) {
 
     return fetch( url )
-            .then( response => { 
-
+            .then( response => {
+                
                 return response.json();
 
             } )

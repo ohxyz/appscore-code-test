@@ -1,6 +1,5 @@
 import React from 'react';
 import { List } from './list.js';
-import { getEarthquakes } from './service.js';
 import '@ohxyz/grid/style/default.css';
 
 class EarthquakeList extends React.Component {
@@ -9,23 +8,15 @@ class EarthquakeList extends React.Component {
 
         super( props )
 
-        this.url = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson';
-
         this.state = {
 
             earthquakes: []
         };
-
-        this.getAllEarthquakes();
     }
 
-    getAllEarthquakes() {
+    updateList( earthquakes ) {
 
-        getEarthquakes( this.url )
-            .then( earthquakes => { 
-
-                this.setState( { earthquakes: earthquakes } )
-            } )
+        this.setState( { earthquakes: earthquakes } );
     }
 
     render() {
@@ -35,7 +26,7 @@ class EarthquakeList extends React.Component {
             return 'Loading...';
         }
 
-        let columnRefs = [
+        let columnDefs = [
 
             { prop: 'location', name: 'Location' },
             { prop: 'datetime', name: 'Datetime' },
@@ -44,11 +35,10 @@ class EarthquakeList extends React.Component {
             { prop: 'depth', name: 'Depth' },
             { prop: 'magnitude', name: 'Magnitude' },
             { prop: 'tsunami', name: 'Tsunami' },
-
         ];
 
         return (
-                <List items={ this.state.earthquakes } cols={ columnRefs } />
+                <List items={ this.state.earthquakes } cols={ columnDefs } />
         );
     }
 }
