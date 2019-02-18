@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { EarthquakeList } from './list/earthquake-list.js';
-import { promiseGetEarthquakeMap } from './map/arcgis.js';
+import { EarthquakeList } from './earthquake-list/earthquake-list.js';
+import { promiseGetEarthquakeMap } from './earthquake-map/earthquake-map.js';
 import { getEarthquakes } from './services/earthquake.js';
+import { Storage } from './storage';
 import './styles/index.less';
 
 class App {
@@ -22,21 +23,57 @@ class App {
         this.promiseGetEarthquakeMap = promiseGetEarthquakeMap;
     }
 
-    promiseFetch( url ) {
+    promiseFetchEarthquakes( url ) {
 
         return getEarthquakes( url );
     }
 
     init() {
 
-        this.promiseFetch( this.earthquakeSource )
+        let storage = new Storage();
+
+        this.promiseFetchEarthquakes( this.earthquakeSource )
             .then( earthquakes => {
 
-               this.earthquakeList.updateList( earthquakes ) 
+               storage.store( 'earthquakes', earthquakes );
+               this.earthquakeList.updateList( earthquakes );
 
-            } );
+            } )
 
-        this.promiseGetEarthquakeMap().then( map => map.init() );
+        this.promiseGetEarthquakeMap().then( map => { 
+
+            let point = {
+
+                type: "point",
+                longitude: 131,
+                latitude: -25
+            };
+
+            map.createMap();
+
+            storage.promiseGetData( 'earthquakes' )
+                   .then( earthquakes => { 
+
+                        let points = earthquakes.map( each => { 
+
+                            return { 
+
+                                type: "point",
+                                longitude: each.longitude,
+                                latitude: each.latitude
+                            };
+
+                        } );
+
+                       map.addLocations( points );
+
+                   } )
+                   .catch( errorMessage => { 
+
+                       throw new Error( errorMessage );
+
+                   } );
+        } );
     }
 }
 
