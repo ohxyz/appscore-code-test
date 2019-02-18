@@ -1,5 +1,5 @@
 /**
- * Observer pattern
+ * Storage utility
  *
  */
 

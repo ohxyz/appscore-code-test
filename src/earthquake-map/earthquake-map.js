@@ -12,14 +12,28 @@ const promiseGetEarthquakeMap = () => new Promise( resolve => {
         "esri/layers/FeatureLayer",
         "esri/config",
         "esri/request",
-        "esri/Graphic"
+        "esri/Graphic",
+        "esri/geometry/Point",
 
-    ], ( MapView, Map, FeatureLayer, esriConfig, esriRequest, Graphic ) => {      
+    ], ( MapView, Map, FeatureLayer, esriConfig, esriRequest, Graphic, Point ) => {      
 
         var locals = {
 
             map: null
         };
+
+        var fields = [ 
+            {
+                name: "ObjectID",
+                alias: "ObjectID",
+                type: "oid"
+            },
+            {
+                name: "mag",
+                alias: "mag",
+                type: "string"
+            }
+        ];
 
         function createMap() {
 
@@ -37,38 +51,66 @@ const promiseGetEarthquakeMap = () => new Promise( resolve => {
             } );
         }
 
-        function addLocations( points ) {
+        function addLocations( earthquakes ) {
 
             var symbol = {
 
-                type: "simple-marker",  // autocasts as new SimpleMarkerSymbol()
-                style: "square",
-                color: "blue",
-                size: "8px",  // pixels
-                outline: {  // autocasts as new SimpleLineSymbol()
-                    color: [ 255, 255, 0 ],
-                    width: 3  // points
+                type: "simple-marker",
+                style: "circle",
+                size: 20,
+                color: [ 211, 255, 0, 0 ],
+                outline: {
+                    width: 1,
+                    color: "#FF0055",
+                    style: "solid"
                 }
             };
+
+            var visualVariables = [ {
+
+                type: 'size',
+                field: 'mag',
+                minDataValue: 2,
+                maxDataValue: 7,
+                minSize: 8,
+                maxSize: 40
+            } ];
 
             var renderer = {
 
                 type: "simple",  // autocasts as new SimpleRenderer()
-                symbol: symbol
+                symbol: symbol,
+                visualVariables: visualVariables
             };
 
-            var graphics = points.map( point => { 
+            var graphics = earthquakes.map( ( quake, index ) => {
 
-                return new Graphic( { geometry: point, symbol: symbol } )
-            } )
+                let point = new Point( {
+
+                    x: quake.longitude,
+                    y: quake.latitude,
+                } )
+
+                let attributes = {
+
+                    ObjectID: index,
+                    mag: String( quake.magnitude )
+                };
+
+                return new Graphic( { 
+
+                    geometry: point,
+                    attributes: attributes
+                } );
+
+            } );
 
             var layer = new FeatureLayer( {
 
-                source: graphics, // autocast as an array of esri/Graphic
-                // create an instance of esri/layers/support/Field for each field object
-                // fields: fields, // This is required when creating a layer from Graphics
-                objectIdField: "XXXXXXXXXXXXXXXXXX", // This must be defined when creating a layer from Graphics
-                renderer: renderer, // set the visualization on the layer
+                source: graphics, 
+                fields: fields, 
+                objectIdField: "ObjectID",
+                renderer: renderer,
             
             } );
 

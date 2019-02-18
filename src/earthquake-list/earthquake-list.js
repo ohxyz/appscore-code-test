@@ -29,17 +29,15 @@ class EarthquakeList extends React.Component {
         let columnDefs = [
 
             { prop: 'location', name: 'Location' },
-            { prop: 'datetime', name: 'Datetime' },
-            { prop: 'longitude', name: 'Logitude' },
+            { prop: 'datetime', name: 'Date and time' },
+            { prop: 'longitude', name: 'Longitude' },
             { prop: 'latitude', name: 'Latitude' },
             { prop: 'depth', name: 'Depth' },
             { prop: 'magnitude', name: 'Magnitude' },
             { prop: 'tsunami', name: 'Tsunami' },
         ];
 
-        return (
-                <List items={ this.state.earthquakes } cols={ columnDefs } />
-        );
+        return <List items={ this.state.earthquakes } cols={ columnDefs } />;
     }
 }
 
