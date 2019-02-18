@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { EarthquakeList } from './earthquake-list/earthquake-list.js';
-import { promiseGetEarthquakeMap } from './earthquake-map/earthquake-map.js';
+import { promiseGetMapModule } from './earthquake-map/earthquake-map.js';
 import { getEarthquakes } from './services/earthquake.js';
 import { Earthquake } from './models/earthquake.js';
 import { Storage } from './storage';
@@ -17,11 +17,16 @@ class App {
 
         this.earthquakeList = ReactDOM.render(
 
-            <EarthquakeList />,
+            <EarthquakeList onRowClick={ this.handleRowClick } />,
             document.getElementById( 'earthquake-list' )
         );
+    }
 
-        this.promiseGetEarthquakeMap = promiseGetEarthquakeMap;
+    handleRowClick( object ) {
+
+        let point = [ object.longitude, object.latitude ];
+
+        promiseGetMapModule().then( module => module.setCenter( point ) )
     }
 
     promiseFetchEarthquakes( url ) {
@@ -41,14 +46,12 @@ class App {
 
             } )
 
-        this.promiseGetEarthquakeMap().then( map => { 
-
-            map.createMap();
+        promiseGetMapModule().then( module => { 
 
             storage.promiseGetData( 'earthquakes' )
                    .then( earthquakes => { 
 
-                       map.addLocations( earthquakes );
+                       module.addLocations( earthquakes );
 
                    } )
                    .catch( errorMessage => { 

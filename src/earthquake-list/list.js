@@ -6,10 +6,10 @@ class List extends Grid {
     renderCell( content, title ) {
 
         return  <React.Fragment>
-                    <span className={ this.makeClassNameByPrefix( 'row-cell-title' ) } >
+                    <span className={ this.makeClassNameByPrefix( 'cell-title' ) } >
                         { title }
                     </span>
-                    <span className={ this.makeClassNameByPrefix( 'row-cell-content' ) } >
+                    <span className={ this.makeClassNameByPrefix( 'cell-content' ) } >
                         { content }
                     </span>
                 </React.Fragment>

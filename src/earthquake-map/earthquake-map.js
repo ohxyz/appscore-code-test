@@ -2,7 +2,14 @@
  * Create an earthquake map with longitudes and latitudes
  *
  */
-const promiseGetEarthquakeMap = () => new Promise( resolve => {
+
+const locals = {
+
+    map: null,
+    view: null,
+};
+
+const promiseGetMapModule = () => new Promise( resolve => {
 
     // AMD
     window.require( [
@@ -15,25 +22,28 @@ const promiseGetEarthquakeMap = () => new Promise( resolve => {
         "esri/Graphic",
         "esri/geometry/Point",
 
-    ], ( MapView, Map, FeatureLayer, esriConfig, esriRequest, Graphic, Point ) => {      
+    ], ( MapView, Map, FeatureLayer, esriConfig, esriRequest, Graphic, Point ) => {
 
-        var locals = {
+        var module = {
 
-            map: null
+            map: locals.map,
+            view: locals.view,
+            setCenter,
+            addLocations,
         };
 
-        var fields = [ 
-            {
-                name: "ObjectID",
-                alias: "ObjectID",
-                type: "oid"
-            },
-            {
-                name: "mag",
-                alias: "mag",
-                type: "string"
-            }
-        ];
+        if ( module.map === null ) {
+
+            createMap();
+        }
+
+        resolve( module );
+
+        function setCenter( point ) {
+
+            locals.view.center = point;
+            locals.view.zoom = 6;
+        }
 
         function createMap() {
 
@@ -42,7 +52,7 @@ const promiseGetEarthquakeMap = () => new Promise( resolve => {
                 basemap: "dark-gray"
             } );
 
-            var view = new MapView( {
+            locals.view = new MapView( {
 
                 container: "earthquake-map",
                 map: locals.map,
@@ -52,6 +62,19 @@ const promiseGetEarthquakeMap = () => new Promise( resolve => {
         }
 
         function addLocations( earthquakes ) {
+
+            var fields = [ 
+                {
+                    name: "ObjectID",
+                    alias: "ObjectID",
+                    type: "oid"
+                },
+                {
+                    name: "mag",
+                    alias: "mag",
+                    type: "string"
+                }
+            ];
 
             var symbol = {
 
@@ -117,18 +140,11 @@ const promiseGetEarthquakeMap = () => new Promise( resolve => {
             locals.map.add( layer );
         }
 
-        resolve( { 
-
-            createMap, 
-            addLocations 
-
-        } );
-
     } );
 
 } );
 
 export {
 
-    promiseGetEarthquakeMap
+    promiseGetMapModule
 };

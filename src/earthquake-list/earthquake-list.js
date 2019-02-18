@@ -19,6 +19,11 @@ class EarthquakeList extends React.Component {
         this.setState( { earthquakes: earthquakes } );
     }
 
+    handleRowClick( object ) {
+
+        this.props.onRowClick( object );
+    }
+
     render() {
 
         if ( Array.isArray( this.state.earthquakes) && this.state.earthquakes.length === 0 ) {
@@ -37,7 +42,10 @@ class EarthquakeList extends React.Component {
             { prop: 'tsunami', name: 'Tsunami' },
         ];
 
-        return <List items={ this.state.earthquakes } cols={ columnDefs } />;
+        return <List items={ this.state.earthquakes } 
+                     cols={ columnDefs } 
+                     onRowClick={ this.handleRowClick.bind( this ) }
+               />;
     }
 }
 
